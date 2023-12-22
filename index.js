@@ -29,6 +29,33 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
+    const reviewCollection = client.db("taskifyDB").collection("testimonials");
+    const userCollection = client.db("taskifyDB").collection("users");
+
+
+
+    // users
+    app.get("/users", async(req, res)=> {
+      const result = await userCollection.find().toArray()
+      res.send(result)
+    })
+    app.post('/users', async(req, res)=> {
+      const user = req.body;
+
+      const query = {email: user.email}
+      const existingUser = await userCollection.findOne(query);
+      if (existingUser) {
+        return res.send({message: 'user exist', insertedId: null})
+      }
+      const result = await userCollection.insertOne(user)
+      res.send(result);
+    })
+    // testimonials
+    app.get("/testimonials", async(req, res)=> {
+      const result = await reviewCollection.find().toArray();
+      res.send(result)
+    })
+
 
 
     // Send a ping to confirm a successful connection
