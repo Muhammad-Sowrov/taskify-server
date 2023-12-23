@@ -30,14 +30,36 @@ async function run() {
     // await client.connect();
 
     const reviewCollection = client.db("taskifyDB").collection("testimonials");
+    const cardCollection = client.db("taskifyDB").collection("cards");
     const userCollection = client.db("taskifyDB").collection("users");
+    const taskCollection = client.db("taskifyDB").collection("tasks");
 
+    // task 
+    app.get("/tasks", async(req, res)=>{
+      const email = req.query.email;
+      const query = {email: email}
+      const result = await taskCollection.find(query).toArray()
+      res.send(result)
+    })
 
+    app.post("/tasks", async(req, res)=> {
+      const tasks = req.body;
+      const result = await taskCollection.insertOne(tasks)
+      res.send(result)
+    })
+    // card
+    app.get("/cards", async(req, res)=> {
+      const result = await cardCollection.find().toArray()
+      res.send(result)
+    })
 
     // users
     app.get("/users", async(req, res)=> {
-      const result = await userCollection.find().toArray()
+      const email = req.query.email;
+      const query = {email: email}
+      const result = await userCollection.find(query).toArray()
       res.send(result)
+
     })
     app.post('/users', async(req, res)=> {
       const user = req.body;
